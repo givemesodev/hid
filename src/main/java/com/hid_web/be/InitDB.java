@@ -2,6 +2,8 @@ package com.hid_web.be;
 
 import com.hid_web.be.storage.ExhibitEntity;
 import com.hid_web.be.storage.ExhibitArtistEntity;
+import com.hid_web.be.storage.content.ContentMainVideoEntity;
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,10 +17,13 @@ import java.util.List;
 public class InitDB {
     private final InitService initService;
 
-//    @PostConstruct
+    @PostConstruct
     public void init() {
+        /*
         initService.dbInit1();
         initService.dbInit2();
+        */
+        initService.dbInit3();
     }
 
     @Component
@@ -32,7 +37,7 @@ public class InitDB {
             ExhibitEntity exhibitEntity = new ExhibitEntity();
             List<ExhibitArtistEntity> exhibitArtistEntities = new ArrayList<>();
 
-            exhibitEntity.setMainImgUrl("대표 이미지");
+            exhibitEntity.setMainImgObjectKey("대표 이미지");
 
             ExhibitArtistEntity exhibitArtistEntityEntityKZ = new ExhibitArtistEntity();
 
@@ -70,7 +75,7 @@ public class InitDB {
             exhibitEntity.setTextEn("HID Design 2024 Summer Exhibit - 2");
             exhibitEntity.setVideoUrl("전시 영상 - 2");
 
-            exhibitEntity.setMainImgUrl("대표 이미지");
+            exhibitEntity.setMainImgObjectKey("대표 이미지");
 
             ExhibitArtistEntity exhibitArtistEntityEntityJS = new ExhibitArtistEntity();
             exhibitArtistEntityEntityJS.setNameEn("Designer C");
@@ -83,5 +88,21 @@ public class InitDB {
             em.persist(exhibitEntity);
         }
 
+        public void dbInit3() {
+            Long year = 2024L;
+            List<ContentMainVideoEntity> existingVideos = em.createQuery(
+                            "SELECT v FROM ContentMainVideoEntity v WHERE v.year = :year", ContentMainVideoEntity.class)
+                    .setParameter("year", year)
+                    .getResultList();
+
+            if (existingVideos.isEmpty()) {
+                ContentMainVideoEntity contentMainVideoEntity = new ContentMainVideoEntity();
+                contentMainVideoEntity.setTitle("2024 졸업 전시 영상");
+                contentMainVideoEntity.setS3ObjectKey("graduation-videos/2024/2024_graduation_video.mp4");
+                contentMainVideoEntity.setYear(year);
+
+                em.persist(contentMainVideoEntity);
+            }
+        }
     }
 }

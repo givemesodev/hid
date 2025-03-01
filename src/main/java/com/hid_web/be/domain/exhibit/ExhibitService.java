@@ -1,10 +1,7 @@
 package com.hid_web.be.domain.exhibit;
 
-import java.io.IOException;
-import java.util.*;
-
+import com.hid_web.be.domain.s3.S3UrlConverter;
 import com.hid_web.be.domain.s3.S3Writer;
-import com.hid_web.be.storage.ExhibitSubImgEntity;
 import com.hid_web.be.storage.ExhibitArtistEntity;
 import com.hid_web.be.storage.ExhibitDetailImgEntity;
 import com.hid_web.be.storage.ExhibitEntity;
@@ -13,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -24,15 +24,23 @@ public class ExhibitService {
     private final ExhibitExtractor exhibitExtractor;
 
     public List<ExhibitEntity> findAllExhibit() {
-        return exhibitReader.findAllExhibit();
+        return exhibitReader.findAll();
+    }
+
+    // 소모임 전시에선 연도와 소모임 이름으로 필터링 구현
+    public List<ExhibitEntity> findExhibitsByYearAndClub(ExhibitType type, String year, String club) {
+        if (club.equals("ALL")) {
+            return exhibitReader.findByTypeAndYear(type, year);
+        }
+
+        return exhibitReader.findByTypeAndYearAndClub(type, year, club);
     }
 
     public ExhibitEntity findExhibitByExhibitId(Long exhibitId) {
-        return exhibitReader.findExhibitById(exhibitId);
+        return exhibitReader.findByExhibitId(exhibitId);
     }
 
     public ExhibitEntity createExhibit(MultipartFile mainImgFile,
-                                       List<ExhibitSubImg> subImgs,
                                        List<ExhibitDetailImg> detailImgs,
                                        ExhibitDetail details,
                                        List<ExhibitArtist> artists) throws IOException {
@@ -40,26 +48,17 @@ public class ExhibitService {
         String exhibitUUID = UUID.randomUUID().toString();
 
         // 메인 이미지 S3 저장
-        String mainImgUrl = s3Writer.writeFileV2(mainImgFile, exhibitUUID + "/main-thumbnail-image");
-
-        // 부가 이미지 S3 저장
-        // 필수가 아니므로 널 확인
-        if (subImgs != null) {
-            for (ExhibitSubImg subImg : subImgs) {
-                String subImgUrl = s3Writer.writeFileV2(subImg.getFile(), exhibitUUID + "/additional-thumbnails-images");
-                subImg.setUrl(subImgUrl);
-            }
-        }
+        String mainImgUrl = s3Writer.writeFile(mainImgFile, exhibitUUID + "/main-image");
 
         // 상세 이미지 S3 저장
         for (ExhibitDetailImg detailImg : detailImgs) {
-            String detailImageUrl = s3Writer.writeFileV2(detailImg.getFile(), exhibitUUID + "/additional-thumbnails-images");
+            String detailImageUrl = s3Writer.writeFile(detailImg.getFile(), exhibitUUID + "/detail-images");
             detailImg.setUrl(detailImageUrl);
         }
 
         // 전시 아티스트 프로필 이미지 S3 저장
         for (ExhibitArtist artist : artists) {
-                String profileImgUrl = s3Writer.writeFileV2(artist.getProfileImgFile(), exhibitUUID + "/profile-images");
+                String profileImgUrl = s3Writer.writeFile(artist.getProfileImgFile(), exhibitUUID + "/profile-images");
                 artist.setProfileImgUrl(profileImgUrl);
         }
 
@@ -67,7 +66,6 @@ public class ExhibitService {
         ExhibitEntity exhibitEntity = exhibitWriter.createExhibit(
                 exhibitUUID,
                 mainImgUrl,
-                subImgs,
                 detailImgs,
                 details,
                 artists
@@ -79,94 +77,25 @@ public class ExhibitService {
     @Transactional
     public ExhibitEntity updateExhibit(Long exhibitId,
                                        MultipartFile mainImgFile,
-                                       List<ExhibitSubImg> subImgs,
                                        List<ExhibitDetailImg> detailImgs,
                                        ExhibitDetail details,
                                        List<ExhibitArtist> artists) throws IOException {
-        ExhibitEntity exhibitEntity = exhibitReader.findExhibitById(exhibitId);
+        ExhibitEntity exhibitEntity = exhibitReader.findByExhibitId(exhibitId);
 
         // 메인 이미지 Update
         if (mainImgFile != null) {
-            String mainImgUrl = s3Writer.writeFileV2(mainImgFile, exhibitEntity.getExhibitUUID() + "/main-thumbnail-image");
-            exhibitEntity.setMainImgUrl(mainImgUrl);
+            String mainImgObjectKey = s3Writer.writeFile(mainImgFile, exhibitEntity.getExhibitUUID() + "/main-image");
+            exhibitEntity.setMainImgObjectKey(mainImgObjectKey);
         }
 
-        // 부가 이미지 Update - Url로 엔티티 식별
-        if (subImgs != null) {
-            // 기존 이미지 Entity 리스트를 키가 Url인 HashMap으로 변환
-            Map<String, ExhibitSubImgEntity> subImgMapByUrl = exhibitExtractor.extractSubImgMapByUrl(exhibitEntity);
-
-            // 기존 Url Set, 수정 후 Url Set을 가지는 UrlState 생성
-            Set<String> currentUrls = subImgMapByUrl.keySet();
-            ExhibitUrlState subImgUrlsState = new ExhibitUrlState(currentUrls);
-
-            // 이 부분을 구현 Presentation Layer, Business Layer, Implement Layer, Data Access Layer 중에서 Implement Layer의 ExhibitExtractor에 구현하여 4-Tier 레이어드 아키텍처를 구현
-            /*Map<String, ExhibitSubImgEntity> entityMap = exhibitEntity.getSubImgEntities()
-                .stream()
-                .collect(Collectors.toMap(
-                        e -> e.getSubImgUrl(), // 키: URL
-                        e -> e // 값: 해당 엔티티 자체
-                ));
-
-            // 수정 후 유효한 이미지가 하나도 없을 경우 기존 이미지 전체 삭제
-            if (subImgs.isEmpty()) {
-                // S3에서 삭제 처리
-                for (String url : currentUrls) {
-                    s3Writer.deleteObject(url); // S3에서 삭제
-                }
-
-                // DB에서 삭제 처리
-                exhibitEntity.getSubImgEntities().clear();
-            }*/
-
-            for (ExhibitSubImg subImg : subImgs) {
-                switch (subImg.getType()) {
-                    // S3에 파일 업로드 (file 존재, url = null)
-                    case FILE:
-                        String uploadedUrl = s3Writer.writeFileV2(subImg.getFile(), exhibitEntity.getExhibitUUID() + "/additional-thumbnails-images");
-
-                        // 수정 후 Url Set에 추가
-                        subImgUrlsState.getUpdatedUrls().add(uploadedUrl);
-
-                        // 새로운 Entity 생성 후 기존 이미지 Entity 리스트에 추가
-                        ExhibitSubImgEntity createdEntity = new ExhibitSubImgEntity(null, uploadedUrl, subImg.getPosition());
-                        exhibitEntity.getSubImgEntities().add(createdEntity);
-
-                        break;
-
-                    // 파일 업로드가 아닌 기존 이미지에 대한 처리 (file = null, url 존재)
-                    case URL:
-                        // 유효한 Url Set에 추가
-                        subImgUrlsState.getUpdatedUrls().add(subImg.getUrl());
-
-                        // 기존에 존재하는 엔티티이므로 해시 맵에서 꺼내, 포지션 업데이트
-                        ExhibitSubImgEntity updatedEntity = subImgMapByUrl.get(subImg.getUrl());
-                        updatedEntity.setPosition(subImg.getPosition());
-                }
-            }
-
-            //기존 Url Set, 수정 후 Url Set을 비교하여 삭제할 Url Set 반환
-            Set<String> deletedUrls = subImgUrlsState.extractDeletedUrls();
-
-            // S3에서 삭제
-            for (String url : deletedUrls) {
-                s3Writer.deleteObject(url); // S3에서 삭제
-            }
-
-            // DB에서 삭제 - 기존 이미지 Entity 리스트에서 삭제 대상 제거하여 JPA의 더티 체킹으로 처리
-            exhibitEntity.getSubImgEntities().removeIf(
-                    e -> deletedUrls.contains(e.getSubImgUrl())
-            );
-        }
-
-        // 상세 이미지 Update - 부가 이미지 Update와 동일한 로직으로 구현
+        // 상세 이미지 Update
         if (detailImgs != null) {
             // 기존 이미지 Entity 리스트를 키가 Url인 HashMap으로 변환
-            Map<String, ExhibitDetailImgEntity> detailImgMapByUrl = exhibitExtractor.extractDetailImgMapByUrl(exhibitEntity);
+            Map<String, ExhibitDetailImgEntity> detailImgMapByObjectKey = exhibitExtractor.extractDetailImgMapByObjectKey(exhibitEntity);
 
             // 기존 Url Set, 수정 후 Url Set을 가지는 UrlState 생성
-            Set<String> currentUrls = detailImgMapByUrl.keySet();
-            ExhibitUrlState detailImgsUrlsState = new ExhibitUrlState(currentUrls);
+            Set<String> currentObjectKeys = detailImgMapByObjectKey.keySet();
+            ExhibitObjectKeyState detailImgsObjectKeyState = new ExhibitObjectKeyState(currentObjectKeys);
 
             // 수정 후 유효한 이미지가 하나도 없을 경우 기존 이미지 전체 삭제
             /*if (detailImgs.isEmpty()) {
@@ -183,13 +112,13 @@ public class ExhibitService {
                 switch (detailImg.getType()) {
                     // S3에 파일 업로드 (file 존재, url = null)
                     case FILE:
-                        String uploadedUrl = s3Writer.writeFileV2(detailImg.getFile(), exhibitEntity.getExhibitUUID() + "/detail-images");
+                        String uploadedObjectKey = s3Writer.writeFile(detailImg.getFile(), exhibitEntity.getExhibitUUID() + "/detail-images");
 
-                        // 수정 후 Url Set에 추가
-                        detailImgsUrlsState.getUpdatedUrls().add(uploadedUrl);
+                        // 수정 후 Object Key Set에 추가
+                        detailImgsObjectKeyState.getUpdatedObjectKeys().add(uploadedObjectKey);
 
                         // 새로운 Entity 생성 후 기존 이미지 Entity 리스트에 추가
-                        ExhibitDetailImgEntity createdEntity = new ExhibitDetailImgEntity(null, uploadedUrl, detailImg.getPosition());
+                        ExhibitDetailImgEntity createdEntity = new ExhibitDetailImgEntity(null, uploadedObjectKey, detailImg.getPosition());
                         exhibitEntity.getDetailImgEntities().add(createdEntity);
 
                         break;
@@ -197,32 +126,33 @@ public class ExhibitService {
                     // 파일 업로드가 아닌 기존 이미지에 대한 처리 (file = null, url 존재)
                     case URL:
                         // 유효한 Url Set에 추가
-                        detailImgsUrlsState.getUpdatedUrls().add(detailImg.getUrl());
+                        detailImgsObjectKeyState.getUpdatedObjectKeys().add(S3UrlConverter.convertObjectKeyFromUrl(detailImg.getUrl()));
 
                         // 기존에 존재하는 엔티티이므로 해시 맵에서 꺼내, 포지션 업데이트
-                        ExhibitDetailImgEntity updatedEntity = detailImgMapByUrl.get(detailImg.getUrl());
+                        ExhibitDetailImgEntity updatedEntity = detailImgMapByObjectKey.get(S3UrlConverter.convertObjectKeyFromUrl(detailImg.getUrl()));
                         updatedEntity.setPosition(detailImg.getPosition());
                 }
             }
 
             // 기존 Url Set, 수정 후 Url Set을 비교하여 삭제할 Url Set 반환
-            Set<String> deletedUrls = detailImgsUrlsState.extractDeletedUrls();
+            Set<String> deletedObjectKeys = detailImgsObjectKeyState.extractDeletedObjectKeys();
 
             // S3에서 삭제
-            for (String url : deletedUrls) {
-                s3Writer.deleteObject(url); // S3에서 삭제
+            for (String objectKey : deletedObjectKeys) {
+                s3Writer.deleteObject(objectKey); // S3에서 삭제
             }
 
             // 기존 이미지 Entity 리스트에서 삭제 대상 제거
             exhibitEntity.getDetailImgEntities().removeIf(
-                    e -> deletedUrls.contains(e.getDetailImgUrl())
+                    e -> deletedObjectKeys.contains(e.getDetailImgObjectKey())
             );
         }
 
         // 전시 상세 텍스트 Update
         if (details != null) {
-            if (details.getExhibitType() != null) {
-                exhibitEntity.setExhibitType(details.getExhibitType());
+            /*
+            if (details.getType() != null) {
+                exhibitEntity.setType(details.getType());
             }
             if (details.getYear() != null) {
                 exhibitEntity.setYear(details.getYear());
@@ -230,6 +160,7 @@ public class ExhibitService {
             if (details.getMajor() != null) {
                 exhibitEntity.setMajor(details.getMajor());
             }
+            */
             if (details.getClub() != null) {
                 exhibitEntity.setClub(details.getClub());
             }
@@ -282,18 +213,18 @@ public class ExhibitService {
                 switch (artist.getType()) {
                     // S3에 파일 업로드 (file 존재, url = null)
                     case FILE:
-                        String uploadedUrl = s3Writer.writeFileV2(artist.getProfileImgFile(), exhibitEntity.getExhibitUUID() + "/profile-images");
+                        String uploadedObjectKey = s3Writer.writeFile(artist.getProfileImgFile(), exhibitEntity.getExhibitUUID() + "/profile-images");
 
                         // 새로운 학생을 추가한 후 프로필 사진에 프로필 이미지 업로드하는 경우
                         if (artistEntity == null) {
                             // 새로운 아티스트 추가
-                            artistEntity = new ExhibitArtistEntity(null, UUID.randomUUID().toString(), uploadedUrl);
+                            artistEntity = new ExhibitArtistEntity(null, UUID.randomUUID().toString(), uploadedObjectKey);
                             // 새로운 Entity 생성 후 기존 이미지 Entity 리스트에 추가
                             exhibitEntity.getArtistEntities().add(artistEntity);
                         }
 
                         // 기존 학생의 프로필 사진을 다시 업로드하는 경우
-                        artistEntity.setProfileImgUrl(uploadedUrl);
+                        artistEntity.setProfileImgObjectKey(uploadedObjectKey);
                         artistUUIDState.getUpdatedUUIDs().add(artistEntity.getArtistUUID());
 
                         // 수정 후 UUID Set에 추가
@@ -335,7 +266,7 @@ public class ExhibitService {
 
             // S3에서 삭제
             for (String uuid : deletedUUIDs) {
-                s3Writer.deleteObject(artistMapByUUID.get(uuid).getProfileImgUrl()); // S3에서 삭제
+                s3Writer.deleteObject(artistMapByUUID.get(uuid).getProfileImgObjectKey()); // S3에서 삭제
             }
 
             // DB에서 삭제 - 기존 이미지 Entity 리스트에서 삭제 대상 제거하여 JPA의 더티 체킹으로 처리
@@ -348,7 +279,7 @@ public class ExhibitService {
     }
 
     public void deleteExhibit(Long exhibitId) {
-        ExhibitEntity exhibitEntity = exhibitReader.findExhibitById(exhibitId);
+        ExhibitEntity exhibitEntity = exhibitReader.findByExhibitId(exhibitId);;
 
         s3Writer.deleteObjects(exhibitEntity.getExhibitUUID());
         exhibitWriter.deleteExhibit(exhibitId);

@@ -1,4 +1,4 @@
-package com.hid_web.be.config;
+package com.hid_web.be.support.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,14 +1,15 @@
 package com.hid_web.be.domain.exhibit;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class ExhibitDetail {
-    private ExhibitType exhibitType;
-    private Integer year;
+    private ExhibitType type;
+    private String year;
     private String major;
     private String club;
     private String titleKo;
@@ -18,4 +19,15 @@ public class ExhibitDetail {
     private String textKo;
     private String textEn;
     private String videoUrl;
+
+    public ExhibitDetail(String year, String titleKo, String titleEn, String subTitleKo, String subTitleEn, String textKo, String textEn, String videoUrl) {
+        this.year = year;
+        this.titleKo = titleKo;
+        this.titleEn = titleEn;
+        this.subTitleKo = subTitleKo;
+        this.subTitleEn = subTitleEn;
+        this.textKo = textKo;
+        this.textEn = textEn;
+        this.videoUrl = videoUrl;
+    }
 }

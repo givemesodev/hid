@@ -3,10 +3,16 @@ package com.hid_web.be.controller.request;
 import org.springframework.web.multipart.MultipartFile;
 import lombok.*;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 @Getter
 @Setter
 public class CreateExhibitDetailImgRequest {
+    @NotNull(message = "상세 이미지 파일이 필요합니다")
     private MultipartFile file;
-    private String url;
-    private int position;
+
+    @NotNull
+    @Min(value = 1, message = "위치는 1 이상이어야 합니다")
+    private Integer position;
 }

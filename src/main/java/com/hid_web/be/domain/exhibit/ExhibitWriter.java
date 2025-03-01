@@ -16,7 +16,6 @@ public class ExhibitWriter {
 
     public ExhibitEntity createExhibit(String exhibitUUID,
                                        String mainImgUrl,
-                                       List<ExhibitSubImg> subImgs,
                                        List<ExhibitDetailImg> detailImgs,
                                        ExhibitDetail details,
                                        List<ExhibitArtist> artists) {
@@ -25,30 +24,20 @@ public class ExhibitWriter {
         // 전시 고유 UUID 저장
         exhibitEntity.setExhibitUUID(exhibitUUID);
         // 메인 이미지 Urls 엔티티에 저장
-        exhibitEntity.setMainImgUrl(mainImgUrl);
-
-        // 부가 이미지 Urls 엔티티에 저장
-        List<ExhibitSubImgEntity> additionalImageEntities = new ArrayList<>();
-        for (ExhibitSubImg additionalThumbnailImage : subImgs) {
-            ExhibitSubImgEntity additionalImageEntity = new ExhibitSubImgEntity();
-            additionalImageEntity.setPosition(additionalThumbnailImage.getPosition());
-            additionalImageEntity.setSubImgUrl(additionalThumbnailImage.getUrl());
-            additionalImageEntities.add(additionalImageEntity);
-        }
-        exhibitEntity.setSubImgEntities(additionalImageEntities);
+        exhibitEntity.setMainImgObjectKey(mainImgUrl);
 
         // 상세 이미지 Urls 엔티티에 저장
         List<ExhibitDetailImgEntity> detailImageEntities = new ArrayList<>();
         for (ExhibitDetailImg detailImage : detailImgs) {
             ExhibitDetailImgEntity detailImageEntity = new ExhibitDetailImgEntity();
             detailImageEntity.setPosition(detailImage.getPosition());
-            detailImageEntity.setDetailImgUrl(detailImage.getUrl());
+            detailImageEntity.setDetailImgObjectKey(detailImage.getUrl());
             detailImageEntities.add(detailImageEntity);
         }
         exhibitEntity.setDetailImgEntities(detailImageEntities);
 
         // 상세 Texts 엔티티에 저장
-        exhibitEntity.setExhibitType(details.getExhibitType());
+        exhibitEntity.setType(details.getType());
         exhibitEntity.setYear(details.getYear());
         exhibitEntity.setMajor(details.getMajor());
         exhibitEntity.setClub(details.getClub());
@@ -72,7 +61,7 @@ public class ExhibitWriter {
             artistEntity.setInstagramUrl(artist.getInstagramUrl());
             artistEntity.setBehanceUrl(artist.getBehanceUrl());
             artistEntity.setLinkedinUrl(artist.getLinkedinUrl());
-            artistEntity.setProfileImgUrl(artist.getProfileImgUrl());
+            artistEntity.setProfileImgObjectKey(artist.getProfileImgUrl());
 
             exhibitArtistEntityList.add(artistEntity);
         }

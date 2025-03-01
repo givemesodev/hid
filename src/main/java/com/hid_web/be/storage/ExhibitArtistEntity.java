@@ -18,7 +18,7 @@ public class ExhibitArtistEntity {
     private Long artistId;
 
     private String artistUUID;
-    private String profileImgUrl;
+    private String profileImgObjectKey;
     private String nameKo;
     private String nameEn;
     private String role;
@@ -30,7 +30,7 @@ public class ExhibitArtistEntity {
     public ExhibitArtistEntity(Long id, String artistUUID, String uploadedUrl) {
         this.artistId = id;
         this.artistUUID = artistUUID;;
-        this.profileImgUrl = uploadedUrl;
+        this.profileImgObjectKey = uploadedUrl;
     }
 }
 

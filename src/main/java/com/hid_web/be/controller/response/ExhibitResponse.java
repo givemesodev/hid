@@ -1,6 +1,7 @@
 package com.hid_web.be.controller.response;
 
 import com.hid_web.be.domain.exhibit.ExhibitType;
+import com.hid_web.be.domain.s3.S3UrlConverter;
 import com.hid_web.be.storage.ExhibitEntity;
 import lombok.*;
 
@@ -8,16 +9,15 @@ import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // JPA, Jackson 라이브러리에서 기본 생성자 필요
+@AllArgsConstructor(access = AccessLevel.PROTECTED) // 빌더 패턴에서 필요
 public class ExhibitResponse {
     private Long exhibitId;
     private ExhibitType exhibitType;
-    private Integer year;
+    private String year;
     private String major;
     private String club;
     private String mainImgUrl;
-    private List<ExhibitSubImgResponse> subImgs;
     private List<ExhibitDetailImgResponse> detailImgs;
     private String titleKo;
     private String titleEn;
@@ -32,14 +32,11 @@ public class ExhibitResponse {
     public static ExhibitResponse of(ExhibitEntity exhibitEntity) {
         return ExhibitResponse.builder()
                 .exhibitId(exhibitEntity.getExhibitId())
-                .exhibitType(exhibitEntity.getExhibitType())
+                .exhibitType(exhibitEntity.getType())
                 .year(exhibitEntity.getYear())
                 .major(exhibitEntity.getMajor())
                 .club(exhibitEntity.getClub())
-                .mainImgUrl(exhibitEntity.getMainImgUrl())
-                .subImgs(exhibitEntity.getSubImgEntities().stream()
-                        .map(ExhibitSubImgResponse::of)
-                        .toList())
+                .mainImgUrl(S3UrlConverter.convertCloudfrontUrlFromObjectKey(exhibitEntity.getMainImgObjectKey()))
                 .detailImgs(exhibitEntity.getDetailImgEntities().stream()
                         .map(ExhibitDetailImgResponse::of)
                         .toList())
@@ -56,3 +53,4 @@ public class ExhibitResponse {
                 .build();
     }
 }
+

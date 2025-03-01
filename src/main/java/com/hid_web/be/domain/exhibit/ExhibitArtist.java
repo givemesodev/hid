@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class ExhibitArtist {
     private ExhibitImgType type;
