@@ -1,4 +1,4 @@
-package com.hid_web.be.controller.request;
+package com.hid_web.be.controller.exhibit.request;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;

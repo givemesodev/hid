@@ -1,4 +1,4 @@
-package com.hid_web.be.storage;
+package com.hid_web.be.storage.exhibit;
 
 import com.hid_web.be.domain.exhibit.ExhibitType;
 import jakarta.persistence.*;

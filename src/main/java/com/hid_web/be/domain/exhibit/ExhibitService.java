@@ -2,9 +2,9 @@ package com.hid_web.be.domain.exhibit;
 
 import com.hid_web.be.domain.s3.S3UrlConverter;
 import com.hid_web.be.domain.s3.S3Writer;
-import com.hid_web.be.storage.ExhibitArtistEntity;
-import com.hid_web.be.storage.ExhibitDetailImgEntity;
-import com.hid_web.be.storage.ExhibitEntity;
+import com.hid_web.be.storage.exhibit.ExhibitArtistEntity;
+import com.hid_web.be.storage.exhibit.ExhibitDetailImgEntity;
+import com.hid_web.be.storage.exhibit.ExhibitEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,17 +23,16 @@ public class ExhibitService {
     private final ExhibitReader exhibitReader;
     private final ExhibitExtractor exhibitExtractor;
 
-    public List<ExhibitEntity> findAllExhibit() {
-        return exhibitReader.findAll();
-    }
-
-    // 소모임 전시에선 연도와 소모임 이름으로 필터링 구현
-    public List<ExhibitEntity> findExhibitsByYearAndClub(ExhibitType type, String year, String club) {
-        if (club.equals("ALL")) {
-            return exhibitReader.findByTypeAndYear(type, year);
+    public List<ExhibitEntity> findExhibitsByTypeYearAndTerm(ExhibitType exhibitType, String year, String term) {
+        if ("ALL".equals(term)) {
+            return exhibitReader.findByTypeAndYear(exhibitType, year);
         }
 
-        return exhibitReader.findByTypeAndYearAndClub(type, year, club);
+        if (exhibitType == ExhibitType.CLUB) {
+            return exhibitReader.findByTypeAndYearAndClub(exhibitType, year, term);
+        } else {
+            return exhibitReader.findByTypeAndYearAndMajor(exhibitType, year, term);
+        }
     }
 
     public ExhibitEntity findExhibitByExhibitId(Long exhibitId) {
@@ -284,5 +283,22 @@ public class ExhibitService {
         s3Writer.deleteObjects(exhibitEntity.getExhibitUUID());
         exhibitWriter.deleteExhibit(exhibitId);
     }
+
+    public List<ExhibitEntity> searchExhibits(
+            String searchTerm,
+            ExhibitType exhibitType,
+            String year,
+            SearchType searchType
+    ) {
+        switch (searchType) {
+            case ARTIST:
+                return exhibitReader.searchByArtistName(searchTerm, exhibitType, year);
+            case TITLE:
+                return exhibitReader.searchByTitle(searchTerm, exhibitType, year);
+            default:
+                throw new IllegalArgumentException("유효하지 않은 검색 타입입니다: " + searchType);
+        }
+    }
+
 }
 

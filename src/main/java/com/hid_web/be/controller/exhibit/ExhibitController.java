@@ -1,11 +1,12 @@
-package com.hid_web.be.controller;
+package com.hid_web.be.controller.exhibit;
 
-import com.hid_web.be.controller.request.CreateExhibitRequest;
-import com.hid_web.be.controller.request.UpdateExhibitRequest;
-import com.hid_web.be.controller.response.ExhibitPreviewResponse;
-import com.hid_web.be.controller.response.ExhibitResponse;
+import com.hid_web.be.controller.exhibit.request.CreateExhibitRequest;
+import com.hid_web.be.controller.exhibit.request.UpdateExhibitRequest;
+import com.hid_web.be.controller.exhibit.response.ExhibitPreviewResponse;
+import com.hid_web.be.controller.exhibit.response.ExhibitResponse;
 import com.hid_web.be.domain.exhibit.ExhibitType;
-import com.hid_web.be.storage.ExhibitEntity;
+import com.hid_web.be.domain.exhibit.SearchType;
+import com.hid_web.be.storage.exhibit.ExhibitEntity;
 import com.hid_web.be.domain.exhibit.ExhibitService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -35,11 +36,12 @@ public class ExhibitController {
     }
     */
 
-    @GetMapping("/previews/clubs") // 소모임 전시에선 연도와 소모임 이름으로 필터링 구현
-    public ResponseEntity<Result<List<ExhibitPreviewResponse>>> findExhibitPreviewsByYearAndClub(
+    @GetMapping("/previews")
+    public ResponseEntity<Result<List<ExhibitPreviewResponse>>> findExhibitPreviewsByTypeYearAndTerm(
+            @RequestParam ExhibitType exhibitType,
             @RequestParam(defaultValue = "2024") String year,
-            @RequestParam(defaultValue = "ALL") String club) {
-        List<ExhibitEntity> exhibitEntities = exhibitService.findExhibitsByYearAndClub(ExhibitType.CLUB, year, club);
+            @RequestParam(defaultValue = "ALL") String term) {
+        List<ExhibitEntity> exhibitEntities = exhibitService.findExhibitsByTypeYearAndTerm(exhibitType, year, term);
 
         List<ExhibitPreviewResponse> exhibitPreviewResponses = exhibitEntities.stream()
                 .map(ExhibitPreviewResponse::of)
@@ -59,7 +61,7 @@ public class ExhibitController {
     /*
     @Valid 어노테이션이 있으면 Spring이 자동으로 Validation을 수행하고, 실패 시 MethodArgumentNotValidException을 발생시키며, 이를 @ExceptionHandler가 처리한다.
      */
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<ExhibitResponse> createExhibit(@Valid @ModelAttribute CreateExhibitRequest createExhibitRequest) {
         try {
             ExhibitEntity exhibitEntity = exhibitService.createExhibit(
@@ -75,13 +77,13 @@ public class ExhibitController {
         }
     }
 
-    @DeleteMapping("/{exhibitId}")
+    @DeleteMapping("/admin/{exhibitId}")
     public ResponseEntity<Void> deleteExhibit(@PathVariable Long exhibitId) {
         exhibitService.deleteExhibit(exhibitId);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{exhibitId}")
+    @PutMapping("/admin/{exhibitId}")
     public ResponseEntity<ExhibitResponse> updateExhibit(@Valid @PathVariable Long exhibitId, @ModelAttribute UpdateExhibitRequest updateExhibitRequest) {
         try {
             ExhibitEntity updatedExhibit = exhibitService.updateExhibit(
@@ -95,6 +97,24 @@ public class ExhibitController {
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<ExhibitPreviewResponse>> searchExhibits(
+            @RequestParam ExhibitType exhibitType,
+            @RequestParam String year,
+            @RequestParam SearchType searchType,
+            @RequestParam String searchTerm
+    ) {
+        List<ExhibitEntity> results = exhibitService.searchExhibits(
+                searchTerm, exhibitType, year, searchType
+        );
+
+        List<ExhibitPreviewResponse> previews = results.stream()
+                .map(ExhibitPreviewResponse::of)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(previews);
     }
 
     @Data

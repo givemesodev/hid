@@ -1,4 +1,4 @@
-package com.hid_web.be.domain.resource;
+package com.hid_web.be.domain.content;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.hid_web.be.storage.*;
+import com.hid_web.be.storage.exhibit.ExhibitArtistEntity;
+import com.hid_web.be.storage.exhibit.ExhibitDetailImgEntity;
+import com.hid_web.be.storage.exhibit.ExhibitEntity;
+import com.hid_web.be.storage.exhibit.ExhibitRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

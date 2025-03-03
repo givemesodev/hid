@@ -1,7 +1,7 @@
 package com.hid_web.be.controller.content;
 
 import com.hid_web.be.controller.content.response.ContentMainVideoResponse;
-import com.hid_web.be.domain.resource.ContentService;
+import com.hid_web.be.domain.content.ContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

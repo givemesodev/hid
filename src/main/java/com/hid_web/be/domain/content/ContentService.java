@@ -1,4 +1,4 @@
-package com.hid_web.be.domain.resource;
+package com.hid_web.be.domain.content;
 
 import com.hid_web.be.controller.content.response.ContentMainVideoResponse;
 import com.hid_web.be.storage.content.ContentMainVideoEntity;
