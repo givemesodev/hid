@@ -76,7 +76,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 
   cloud:
     aws:
