@@ -18,29 +18,25 @@ public class CreateExhibitDetailRequest {
     private String major;
     private String club;
 
-    @NotBlank(message = "국문 제목은 필수입니다")
     @Size(max = 33, message = "한글 제목은 33자를 초과할 수 없습니다")
     private String titleKo;
 
-    @NotBlank(message = "영문 제목은 필수입니다")
     @Size(max = 50, message = "영문 제목은 50자를 초과할 수 없습니다")
     private String titleEn;
 
-    @NotBlank(message = "국문 부제는 필수입니다")
     @Size(max = 300, message = "한글 부제목은 300자를 초과할 수 없습니다")
     private String subTitleKo;
 
-    @NotBlank(message = "영문 부제는 필수입니다")
     @Size(max = 700, message = "영문 부제목은 700자를 초과할 수 없습니다")
     private String subTitleEn;
 
     @NotBlank(message = "국문 본문은 필수입니다")
     @Size(max = 1000, message = "한글 본문은 1000자를 초과할 수 없습니다")
-    private String textKo;
+    private String descriptionKo;
 
     @NotBlank(message = "영문 본문은 필수입니다")
     @Size(max = 1000, message = "영문 본문은 1000자를 초과할 수 없습니다")
-    private String textEn;
+    private String descriptionEn;
 
     /**
      * 영상 선택

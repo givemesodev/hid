@@ -23,8 +23,8 @@ public class ExhibitResponse {
     private String titleEn;
     private String subTitleKo;
     private String subTitleEn;
-    private String textKo;
-    private String textEn;
+    private String descriptionKo;
+    private String descriptionEn;
     private String videoUrl;
     private List<ExhibitArtistResponse> artists;
 
@@ -44,8 +44,8 @@ public class ExhibitResponse {
                 .titleEn(exhibitEntity.getTitleEn())
                 .subTitleKo(exhibitEntity.getSubTitleKo())
                 .subTitleEn(exhibitEntity.getSubTitleEn())
-                .textKo(exhibitEntity.getTextKo())
-                .textEn(exhibitEntity.getTextEn())
+                .descriptionKo(exhibitEntity.getDescriptionKo())
+                .descriptionEn(exhibitEntity.getDescriptionEn())
                 .videoUrl(exhibitEntity.getVideoUrl())
                 .artists(exhibitEntity.getArtistEntities().stream()
                         .map(ExhibitArtistResponse::of)

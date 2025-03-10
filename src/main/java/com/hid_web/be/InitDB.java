@@ -32,19 +32,32 @@ public class InitDB {
         private final EntityManager em;
 
         public void dbInit() {
-            Long year = 2024L;
-            List<ContentMainVideoEntity> existingVideos = em.createQuery(
+            Long year2024 = 2024L;
+            List<ContentMainVideoEntity> existingVideos2024 = em.createQuery(
                             "SELECT v FROM ContentMainVideoEntity v WHERE v.year = :year", ContentMainVideoEntity.class)
-                    .setParameter("year", year)
+                    .setParameter("year", year2024)
                     .getResultList();
 
-            if (existingVideos.isEmpty()) {
-                ContentMainVideoEntity contentMainVideoEntity = new ContentMainVideoEntity();
-                contentMainVideoEntity.setTitle("2024 졸업 전시 영상");
-                contentMainVideoEntity.setS3ObjectKey("graduation-videos/2024/2024_graduation_video.mp4");
-                contentMainVideoEntity.setYear(year);
+            if (existingVideos2024.isEmpty()) {
+                ContentMainVideoEntity contentMainVideoEntity2024 = new ContentMainVideoEntity();
+                contentMainVideoEntity2024.setTitle("2024 졸업 전시 영상");
+                contentMainVideoEntity2024.setS3ObjectKey("graduation-videos/2024/2024_graduation_video.mp4");
+                contentMainVideoEntity2024.setYear(year2024);
+                em.persist(contentMainVideoEntity2024);
+            }
 
-                em.persist(contentMainVideoEntity);
+            Long year2023 = 2023L;
+            List<ContentMainVideoEntity> existingVideos2023 = em.createQuery(
+                            "SELECT v FROM ContentMainVideoEntity v WHERE v.year = :year", ContentMainVideoEntity.class)
+                    .setParameter("year", year2023)
+                    .getResultList();
+
+            if (existingVideos2023.isEmpty()) {
+                ContentMainVideoEntity contentMainVideoEntity2023 = new ContentMainVideoEntity();
+                contentMainVideoEntity2023.setTitle("2023 졸업 전시 영상");
+                contentMainVideoEntity2023.setS3ObjectKey("graduation-videos/2023/2023_graduation_video.mp4");
+                contentMainVideoEntity2023.setYear(year2023);
+                em.persist(contentMainVideoEntity2023);
             }
         }
     }

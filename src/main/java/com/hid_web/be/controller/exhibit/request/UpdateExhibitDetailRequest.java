@@ -40,10 +40,10 @@ public class UpdateExhibitDetailRequest {
     private String subTitleEn;
 
     @Size(max = 1000, message = "한글 본문은 1000자를 초과할 수 없습니다")
-    private String textKo;
+    private String descriptionKo;
 
     @Size(max = 1000, message = "영문 본문은 1000자를 초과할 수 없습니다")
-    private String textEn;
+    private String descriptionEn;
 
     /**
      * 영상 선택

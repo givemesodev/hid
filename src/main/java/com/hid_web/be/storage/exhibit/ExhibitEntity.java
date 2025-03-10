@@ -50,10 +50,10 @@ public class ExhibitEntity {
     private String subTitleEn;
 
     @Column(length = 300)
-    private String textKo;
+    private String descriptionKo;
 
     @Column(length = 700)
-    private String textEn;
+    private String descriptionEn;
 
     private String videoUrl;
 

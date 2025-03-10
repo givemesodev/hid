@@ -16,18 +16,18 @@ public class ExhibitDetail {
     private String titleEn;
     private String subTitleKo;
     private String subTitleEn;
-    private String textKo;
-    private String textEn;
+    private String descriptionKo;
+    private String descriptionEn;
     private String videoUrl;
 
-    public ExhibitDetail(String year, String titleKo, String titleEn, String subTitleKo, String subTitleEn, String textKo, String textEn, String videoUrl) {
+    public ExhibitDetail(String year, String titleKo, String titleEn, String subTitleKo, String subTitleEn, String descriptionKo, String descriptionEn, String videoUrl) {
         this.year = year;
         this.titleKo = titleKo;
         this.titleEn = titleEn;
         this.subTitleKo = subTitleKo;
         this.subTitleEn = subTitleEn;
-        this.textKo = textKo;
-        this.textEn = textEn;
+        this.descriptionKo = descriptionKo;
+        this.descriptionEn = descriptionEn;
         this.videoUrl = videoUrl;
     }
 }

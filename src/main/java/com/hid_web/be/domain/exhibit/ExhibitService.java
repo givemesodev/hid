@@ -175,11 +175,11 @@ public class ExhibitService {
             if (details.getSubTitleEn() != null) {
                 exhibitEntity.setSubTitleEn(details.getSubTitleEn());
             }
-            if (details.getTextKo() != null) {
-                exhibitEntity.setTextKo(details.getTextKo());
+            if (details.getDescriptionKo() != null) {
+                exhibitEntity.setDescriptionKo(details.getDescriptionKo());
             }
-            if (details.getTextEn() != null) {
-                exhibitEntity.setTextEn(details.getTextEn());
+            if (details.getDescriptionEn() != null) {
+                exhibitEntity.setDescriptionEn(details.getDescriptionEn());
             }
             if (details.getVideoUrl() != null) {
                 exhibitEntity.setVideoUrl(details.getVideoUrl());

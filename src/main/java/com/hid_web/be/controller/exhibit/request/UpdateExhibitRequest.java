@@ -47,8 +47,8 @@ public class UpdateExhibitRequest {
                 details.getTitleEn(),
                 details.getSubTitleKo(),
                 details.getSubTitleEn(),
-                details.getTextKo(),
-                details.getTextEn(),
+                details.getDescriptionKo(),
+                details.getDescriptionEn(),
                 details.getVideoUrl()
         );
     }

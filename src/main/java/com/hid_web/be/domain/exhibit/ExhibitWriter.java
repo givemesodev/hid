@@ -48,8 +48,8 @@ public class ExhibitWriter {
         exhibitEntity.setTitleEn(details.getTitleEn());
         exhibitEntity.setSubTitleKo(details.getSubTitleKo());
         exhibitEntity.setSubTitleEn(details.getSubTitleEn());
-        exhibitEntity.setTextKo(details.getTextKo());
-        exhibitEntity.setTextEn(details.getTextEn());
+        exhibitEntity.setDescriptionKo(details.getDescriptionKo());
+        exhibitEntity.setDescriptionEn(details.getDescriptionEn());
         exhibitEntity.setVideoUrl(details.getVideoUrl());
 
         // 전시 Artists 엔티티에 저장

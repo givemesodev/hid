@@ -36,14 +36,17 @@ public class WebSecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                /*
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/contents/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/exhibits/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/exhibits/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/exhibits/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/exhibits/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/exhibits/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/exhibits/**").permitAll()
+                        .anyRequest().permitAll()
+                )
+                */
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
