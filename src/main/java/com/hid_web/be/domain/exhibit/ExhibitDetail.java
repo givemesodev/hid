@@ -12,8 +12,8 @@ public class ExhibitDetail {
     private String year;
     private String major;
     private String club;
-    private String instagramUrl;
     private String behanceUrl;
+    private String instagramUrl;
     private String titleKo;
     private String titleEn;
     private String subTitleKo;
@@ -22,8 +22,10 @@ public class ExhibitDetail {
     private String descriptionEn;
     private String videoUrl;
 
-    public ExhibitDetail(String year, String titleKo, String titleEn, String subTitleKo, String subTitleEn, String descriptionKo, String descriptionEn, String videoUrl) {
+    public ExhibitDetail(String year,  String behanceUrl, String instagramUrl, String titleKo, String titleEn, String subTitleKo, String subTitleEn, String descriptionKo, String descriptionEn, String videoUrl) {
         this.year = year;
+        this.behanceUrl = behanceUrl;
+        this.instagramUrl = instagramUrl;
         this.titleKo = titleKo;
         this.titleEn = titleEn;
         this.subTitleKo = subTitleKo;

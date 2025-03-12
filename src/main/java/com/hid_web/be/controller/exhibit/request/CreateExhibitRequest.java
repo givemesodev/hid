@@ -54,7 +54,7 @@ public class CreateExhibitRequest {
                 details.getYear(),
                 details.getMajor(),
                 details.getClub(),
-                details.getInstagramUrl(),
+                details.getBehanceUrl(),
                 details.getInstagramUrl(),
                 details.getTitleKo(),
                 details.getTitleEn(),

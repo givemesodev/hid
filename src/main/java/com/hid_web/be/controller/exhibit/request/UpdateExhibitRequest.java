@@ -43,6 +43,8 @@ public class UpdateExhibitRequest {
 
         return new ExhibitDetail(
                 details.getYear(),
+                details.getBehanceUrl(),
+                details.getInstagramUrl(),
                 details.getTitleKo(),
                 details.getTitleEn(),
                 details.getSubTitleKo(),

@@ -158,10 +158,16 @@ public class ExhibitService {
             }
             if (details.getMajor() != null) {
                 exhibitEntity.setMajor(details.getMajor());
-            }
-            */
+            )
             if (details.getClub() != null) {
                 exhibitEntity.setClub(details.getClub());
+            }
+            */
+            if (details.getBehanceUrl() != null) {
+                exhibitEntity.setBehanceUrl(details.getBehanceUrl());
+            }
+            if (details.getInstagramUrl() != null) {
+                exhibitEntity.setInstagramUrl(details.getInstagramUrl());
             }
             if (details.getTitleKo() != null) {
                 exhibitEntity.setTitleKo(details.getTitleKo());
