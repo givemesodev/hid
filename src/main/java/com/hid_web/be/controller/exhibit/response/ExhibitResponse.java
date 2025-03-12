@@ -4,6 +4,7 @@ import com.hid_web.be.domain.exhibit.ExhibitType;
 import com.hid_web.be.domain.s3.S3UrlConverter;
 import com.hid_web.be.storage.exhibit.ExhibitEntity;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class ExhibitResponse {
     private String year;
     private String major;
     private String club;
+    private String instagramUrl;
+    private String behanceUrl;
     private String mainImgUrl;
     private List<ExhibitDetailImgResponse> detailImgs;
     private String titleKo;
@@ -36,6 +39,8 @@ public class ExhibitResponse {
                 .year(exhibitEntity.getYear())
                 .major(exhibitEntity.getMajor())
                 .club(exhibitEntity.getClub())
+                .instagramUrl(exhibitEntity.getInstagramUrl())
+                .behanceUrl(exhibitEntity.getBehanceUrl())
                 .mainImgUrl(S3UrlConverter.convertCloudfrontUrlFromObjectKey(exhibitEntity.getMainImgObjectKey()))
                 .detailImgs(exhibitEntity.getDetailImgEntities().stream()
                         .map(ExhibitDetailImgResponse::of)

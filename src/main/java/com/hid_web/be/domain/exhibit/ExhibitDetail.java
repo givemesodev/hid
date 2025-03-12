@@ -12,6 +12,8 @@ public class ExhibitDetail {
     private String year;
     private String major;
     private String club;
+    private String instagramUrl;
+    private String behanceUrl;
     private String titleKo;
     private String titleEn;
     private String subTitleKo;

@@ -44,6 +44,8 @@ public class ExhibitWriter {
         exhibitEntity.setYear(details.getYear());
         exhibitEntity.setMajor(details.getMajor());
         exhibitEntity.setClub(details.getClub());
+        exhibitEntity.setInstagramUrl(details.getInstagramUrl());
+        exhibitEntity.setBehanceUrl(details.getBehanceUrl());
         exhibitEntity.setTitleKo(details.getTitleKo());
         exhibitEntity.setTitleEn(details.getTitleEn());
         exhibitEntity.setSubTitleKo(details.getSubTitleKo());

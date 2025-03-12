@@ -4,6 +4,7 @@ import com.hid_web.be.domain.exhibit.ExhibitType;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.URL;
 
 @Getter
 @Setter
@@ -17,6 +18,12 @@ public class CreateExhibitDetailRequest {
 
     private String major;
     private String club;
+
+    @URL(host = "instagram.com", message = "Instagram URL만 허용됩니다")
+    private String instagramUrl;
+
+    @URL(host = "behance.net", message = "Behance URL만 허용됩니다")
+    private String behanceUrl;
 
     @Size(max = 33, message = "한글 제목은 33자를 초과할 수 없습니다")
     private String titleKo;

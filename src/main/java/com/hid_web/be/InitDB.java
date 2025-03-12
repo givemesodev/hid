@@ -1,17 +1,12 @@
 package com.hid_web.be;
 
-import com.hid_web.be.storage.exhibit.ExhibitEntity;
-import com.hid_web.be.storage.exhibit.ExhibitArtistEntity;
 import com.hid_web.be.storage.content.ContentMainVideoEntity;
-import com.hid_web.be.storage.user.UserEntity;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component

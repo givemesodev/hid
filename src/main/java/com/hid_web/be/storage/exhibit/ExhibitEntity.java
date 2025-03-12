@@ -33,6 +33,9 @@ public class ExhibitEntity {
     private String club;
     private String mainImgObjectKey;
 
+    private String behanceUrl;
+    private String instagramUrl;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "exhibit_id")
     private List<ExhibitDetailImgEntity> detailImgEntities = new ArrayList<>();
