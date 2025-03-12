@@ -20,7 +20,7 @@ public class S3UrlConverter {
     }
 
     public static String convertCloudfrontUrlFromObjectKey(String objectKey) {
-        String CLOUDFRONT_DOMAIN = "df4nh3dlx8zzx.cloudfront.net";
+        String CLOUDFRONT_DOMAIN = "di00vgoc2ngki.cloudfront.net";
         return "https://" + CLOUDFRONT_DOMAIN + "/" + objectKey;
     }
 }
