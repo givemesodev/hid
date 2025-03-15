@@ -28,10 +28,10 @@ public class UpdateExhibitDetailRequest {
     private String club;
      */
 
-    @URL(host = "behance.net", message = "Behance URL만 허용됩니다")
+    @URL(host = "www.behance.net", message = "Behance URL만 허용됩니다")
     private String behanceUrl;
 
-    @URL(host = "instagram.com", message = "Instagram URL만 허용됩니다")
+    @URL(host = "www.instagram.com", message = "Instagram URL만 허용됩니다")
     private String instagramUrl;
 
     @Size(max = 33, message = "한글 제목은 33자를 초과할 수 없습니다")

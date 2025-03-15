@@ -28,13 +28,13 @@ public class CreateExhibitArtistRequest {
     @NotBlank(message = "이메일은 필수입니다")
     private String email;
 
-    @URL(host = "instagram.com", message = "Instagram URL만 허용됩니다")
+    @URL(host = "www.instagram.com", message = "Instagram URL만 허용됩니다")
     private String instagramUrl;
 
-    @URL(host = "behance.net", message = "Behance URL만 허용됩니다")
+    @URL(host = "www.behance.net", message = "Behance URL만 허용됩니다")
     private String behanceUrl;
 
-    @URL(host = "linkedin.com", message = "LinkedIn URL만 허용됩니다")
+    @URL(host = "www.linkedin.com", message = "LinkedIn URL만 허용됩니다")
     private String linkedinUrl;
 
     // MultipartFile 유효성 검사를 위한 커스텀 검증

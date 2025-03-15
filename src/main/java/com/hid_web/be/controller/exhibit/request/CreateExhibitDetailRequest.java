@@ -19,10 +19,10 @@ public class CreateExhibitDetailRequest {
     private String major;
     private String club;
 
-    @URL(host = "behance.net", message = "Behance URL만 허용됩니다")
+    @URL(host = "www.behance.net", message = "Behance URL만 허용됩니다")
     private String behanceUrl;
 
-    @URL(host = "instagram.com", message = "Instagram URL만 허용됩니다")
+    @URL(host = "www.instagram.com", message = "Instagram URL만 허용됩니다")
     private String instagramUrl;
 
 

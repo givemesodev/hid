@@ -37,13 +37,13 @@ public class UpdateExhibitArtistRequest {
     @Email(message = "올바른 이메일 형식이어야 합니다")
     private String email;
 
-    @URL(host = "instagram.com", message = "Instagram URL만 허용됩니다")
+    @URL(host = "www.instagram.com", message = "Instagram URL만 허용됩니다")
     private String instagramUrl;
 
-    @URL(host = "behance.net", message = "Behance URL만 허용됩니다")
+    @URL(host = "www.behance.net", message = "Behance URL만 허용됩니다")
     private String behanceUrl;
 
-    @URL(host = "linkedin.com", message = "LinkedIn URL만 허용됩니다")
+    @URL(host = "www.linkedin.com", message = "LinkedIn URL만 허용됩니다")
     private String linkedinUrl;
 
     @AssertTrue(message = "새로운 이미지 업로드 목적으로 FILE 타입인 경우 프로필 이미지 FILE이 필수이며, URL은 입력할 수 없습니다")
